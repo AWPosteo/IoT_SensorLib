@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/andreweber/.platformio/penv/bin:/Users/andreweber/.platformio/penv:/Users/andreweber/Documents/Projects/AnacondaIDE/anaconda3/bin:/Users/andreweber/Documents/Projects/AnacondaIDE/anaconda3/condabin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}

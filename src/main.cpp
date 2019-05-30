@@ -43,21 +43,11 @@ void setup ()
   // Show image buffer on the disp1 hardware.
   // Since the buffer is intialized with an Adafruit splashscreen
   // internally, this will disp1 the splashscreen.
-  disp1.display();
-  disp1.clearDisplay();
-
-  // Clear the buffer.
-
-  // draw a single pixel
-  //display.drawPixel(10, 10, WHITE);
-  // Show the display buffer on the hardware.
-  // NOTE: You _must_ call display after making any drawing commands
-  // to make them visible on the display hardware!
-  //display.display();
-  //delay(2000);
-  //display.clearDisplay();
-
-
+  
+  //??????????????????? Könte Probleme machen!??!?!?!
+  //disp1.display();
+  //disp1.clearDisplay();
+  oledDisplayText(disp1);
 }
 
 void loop() // Starten unserer Schleife
@@ -84,21 +74,21 @@ void loop() // Starten unserer Schleife
           
 
 
-   float h = dht.readHumidity(); //Luftfeuchte auslesen
-   float t = dht.readTemperature(); //Temperatur auslesen
-   
-   // Prüfen ob eine gültige Zahl zurückgegeben wird. Wenn NaN (not a number) zurückgegeben wird, dann Fehler ausgeben.
-   if (isnan(t) || isnan(h)) 
-   {
-   Serial.println("DHT22 konnte nicht ausgelesen werden");
-   } 
-   else
-   {
-   Serial.print("DHT22  (Temp:");  
-   Serial.print(t);
-   Serial.print("°C / Feuchte:");
-   Serial.print(h);
-   Serial.println("% )");
+  float h = dht.readHumidity(); //Luftfeuchte auslesen
+  float t = dht.readTemperature(); //Temperatur auslesen
+  
+  // Prüfen ob eine gültige Zahl zurückgegeben wird. Wenn NaN (not a number) zurückgegeben wird, dann Fehler ausgeben.
+  if (isnan(t) || isnan(h)) 
+  {
+  Serial.println("DHT22 konnte nicht ausgelesen werden");
+  } 
+  else
+  {
+  Serial.print("DHT22  (Temp:");  
+  Serial.print(t);
+  Serial.print("°C / Feuchte:");
+  Serial.print(h);
+  Serial.println("% )");
    
    
 //   disp1.setTextSize(1);
@@ -110,61 +100,84 @@ void loop() // Starten unserer Schleife
 //   disp1.display();
 //   delay(3000);
 
-   disp1.setTextSize(2);
-   disp1.setTextColor(WHITE);
-   disp1.setCursor(15,1);
-   disp1.clearDisplay();
-   disp1.println(String(t) + "");
-   disp1.setCursor(76,8);
-   disp1.setTextSize(1);
-   disp1.println("Temp");
-   
-   
-   disp1.setCursor(15,17);
-   disp1.setTextSize(1);
-   
-   disp1.println(String(h) + " %");
-   disp1.setCursor(15,25);
-   disp1.println("Sensor1:DHT22");
-     
-   disp1.display();
-   delay(5000); 
+  oledDisplayText(disp1,String(t) + "",2,1,15,1,1);
+  oledDisplayText(disp1,"Temp",1,1,76,8,1);
+  oledDisplayText(disp1,String(h) + " %",1,1,15,17,1);
+  oledDisplayText(disp1,"Sensor1:DHT22",1,1,15,25,2);
 
-     
-   disp1.setTextSize(2);
-   disp1.setTextColor(WHITE);
-   disp1.setCursor(15,1);
-   disp1.clearDisplay();
-   disp1.println(String(bme280.getTemperature()) + "");
-   disp1.setCursor(76,8);
-   disp1.setTextSize(1);
-   disp1.println("Temp");
+
+  //disp1.setTextSize(2);
+  //disp1.setTextColor(WHITE);
+  //disp1.setCursor(15,1);
+  //disp1.clearDisplay();
+  //disp1.println(String(t) + "");
+  //disp1.setCursor(76,8);
+  //disp1.setTextSize(1);
+  //disp1.println("Temp");
    
-   disp1.setCursor(15,17);
-   disp1.setTextSize(1);
-   disp1.println(String(bme280.getHumidity()*1.00) + " %");
-   disp1.setCursor(15,25);
-   disp1.println("Sensor2:BME280");
+
    
-   disp1.display();
+  //disp1.setCursor(15,17);
+  //disp1.setTextSize(1);
+  //
+  //disp1.println(String(h) + " %");
+  //disp1.setCursor(15,25);
+  //disp1.println("Sensor1:DHT22");
+  //  
+  //disp1.display();
+  
+  
+  delay(5000); 
+
+  oledDisplayText(disp1,String(bme280.getTemperature()) + "",2,1,15,1,1);
+  oledDisplayText(disp1,"Temp",1,1,76,8,1);
+  oledDisplayText(disp1,String(bme280.getHumidity()*1.00) + " %",1,1,15,17,1);
+  oledDisplayText(disp1,"Sensor2:BME280",1,1,15,25,1);
+
    delay(5000);
+
+
+
+
+  //disp1.setTextSize(2);
+  //disp1.setTextColor(WHITE);
+  //disp1.setCursor(15,1);
+  //disp1.clearDisplay();
+  //disp1.println(String(bme280.getTemperature()) + "");
+  //disp1.setCursor(76,8);
+  //disp1.setTextSize(1);
+  //disp1.println("Temp");
+  //
+  //disp1.setCursor(15,17);
+  //disp1.setTextSize(1);
+  //disp1.println(String(bme280.getHumidity()*1.00) + " %");
+  //disp1.setCursor(15,25);
+  //disp1.println("Sensor2:BME280");
+  //
+  //disp1.display();
+  //delay(5000);
    
    }
    //delay(3000); 
   
-  oledDisplayText(disp1)
+  
 
 }
 
 
-void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText="", uint16_t oledTextSize=1, uint16_t oledColor=1, int oledTextPosX=1, int oledTextPosY=1, int oledAction=0)
+void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText="", uint8_t oledTextSize=1, uint16_t oledColor=1, int16_t oledTextPosX=1, int16_t oledTextPosY=1, uint8_t oledAction=0)
 {
+  // oledAction 0=Clear Display, 1=Just Prepare Content, 2=Do the refresh & update
   if (oledAction = 0) {
     oledScreen.clearDisplay();
   } else {
       oledScreen.setTextSize(oledTextSize);
       oledScreen.setTextColor(oledColor);
-
+      oledScreen.setCursor(oledTextPosX,oledTextPosY);
+      oledScreen.println(oledText);
+      if (oledAction = 2) {
+        oledScreen.display();
+      }
     
   }
 }
