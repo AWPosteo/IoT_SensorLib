@@ -19,6 +19,8 @@ DHT sensorDHT22(DHTPIN, DHTTYPE);
 //BME280 (via SCL/SDA)
 BME280 sensorBME280;
 
+void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction);
+
 void setup ()
 {
    Serial.begin(9600);
@@ -32,7 +34,10 @@ void setup ()
 
 
   oled01.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
-  oledDisplayText(oled01);
+  oled01.display();
+  oled01.clearDisplay();
+  oled01.display();
+
 }
 
 void loop()
@@ -74,17 +79,33 @@ void loop()
   Serial.print(h);
   Serial.println("% )");
 
-  oledDisplayText(oled01,String(t) + "",2,1,15,1,1);
-  oledDisplayText(oled01,"Temp",1,1,76,8,1);
-  oledDisplayText(oled01,String(h) + " %",1,1,15,17,1);
+//   disp1.setTextSize(1);
+//   disp1.setTextColor(WHITE);
+//   disp1.setCursor(1,1);
+//   disp1.clearDisplay();
+//   disp1.println(String(t) + "C / " + String(bme280.getTemperature()) + "C");
+
+
+  
+  oled01.clearDisplay();
+  oled01.display();
+
+  oledDisplayText(oled01,String(t) + "",2,1,15,1,2);
+  oledDisplayText(oled01,"Temp",1,1,76,8,2);
+  oledDisplayText(oled01,String(h) + " %",1,1,15,17,2);
   oledDisplayText(oled01,"Sensor1:DHT22",1,1,15,25,2);
   
   delay(5000); 
 
-  oledDisplayText(oled01,String(sensorBME280.getTemperature()) + "",2,1,15,1,1);
-  oledDisplayText(oled01,"Temp",1,1,76,8,1);
-  oledDisplayText(oled01,String(sensorBME280.getHumidity()*1.00) + " %",1,1,15,17,1);
-  oledDisplayText(oled01,"Sensor2:BME280",1,1,15,25,1);
+  //oledDisplayText(oled01);
+  
+  oled01.clearDisplay();
+  oled01.display();
+  
+  oledDisplayText(oled01,String(sensorBME280.getTemperature()) + "",2,1,15,1,2);
+  oledDisplayText(oled01,"Temp",1,1,76,8,2);
+  oledDisplayText(oled01,String(sensorBME280.getHumidity()*1.00) + " %",1,1,15,17,2);
+  oledDisplayText(oled01,"Sensor2:BME280",1,1,15,25,2);
 
   delay(5000);
    
@@ -92,19 +113,19 @@ void loop()
 }
 
 
-void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText="", uint8_t oledTextSize=1, uint16_t oledColor=1, int16_t oledTextPosX=1, int16_t oledTextPosY=1, uint8_t oledAction=0)
+void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction)
 {
   // oledAction 0=Clear Display, 1=Just Prepare Content, 2=Do the refresh & update
-  if (oledAction = 0) {
+  if (oledAction == 0) {
+    oledScreen.display();
     oledScreen.clearDisplay();
   } else {
       oledScreen.setTextSize(oledTextSize);
       oledScreen.setTextColor(oledColor);
       oledScreen.setCursor(oledTextPosX,oledTextPosY);
       oledScreen.println(oledText);
-      if (oledAction = 2) {
+      if (oledAction == 2) {
         oledScreen.display();
       }
-    
   }
 }
