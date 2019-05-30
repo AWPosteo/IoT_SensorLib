@@ -152,4 +152,19 @@ void loop() // Starten unserer Schleife
    }
    //delay(3000); 
   
+  oledDisplayText(disp1)
+
+}
+
+
+void oledDisplayText(Adafruit_SSD1306 oledScreen, String oledText="", uint16_t oledTextSize=1, uint16_t oledColor=1, int oledTextPosX=1, int oledTextPosY=1, int oledAction=0)
+{
+  if (oledAction = 0) {
+    oledScreen.clearDisplay();
+  } else {
+      oledScreen.setTextSize(oledTextSize);
+      oledScreen.setTextColor(oledColor);
+
+    
+  }
 }
