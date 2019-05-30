@@ -12,9 +12,9 @@
 #define OLED_RESET 4
 Adafruit_SSD1306 disp1(OLED_RESET);
 
+//Taskcsdskk
 
-
-//DHT22 
+//DHT22 check
 #define DHTPIN 9 
 #define DHTTYPE DHT22 //DHT11, DHT21, DHT22
 
