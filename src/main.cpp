@@ -7,6 +7,23 @@
 #include <DHT.h>
 #include <SPI.h>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //OLED Display SSD1306
 #define OLED_RESET 4
 Adafruit_SSD1306 oled01(OLED_RESET);
@@ -34,9 +51,7 @@ void setup ()
 
 
   oled01.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
-  oled01.display();
-  oled01.clearDisplay();
-  oled01.display();
+  oledDisplayText("",2,1,1,1,0);
 
 }
 
