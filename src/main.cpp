@@ -35,10 +35,8 @@
 //#define OLED_RESET 4;
 //Adafruit_SSD1306 panel1(OLED_RESET);
 
-
-
-// ESP8266 Tryout 
-
+// ESP8266 Tryout
+// TODO: To be deleted!
 
 //OLED Display SSD1306
 #define OLED_RESET 4
