@@ -52,6 +52,7 @@ void oledDisplayText(String oledText, uint8_t oledTextSize, uint16_t oledColor, 
 void setup()
 {
   Serial.begin(9600);
+  //Serial.begin(115200);
   if (!sensorBME280.init()) // Wenn keine Daten vom BME abgefragt werden können...
   {
     Serial.println("FEHLER MIT BME280!"); // ...dann soll eine Fehlermeldung ausgegeben werden.
