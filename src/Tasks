@@ -1,0 +1,27 @@
+- Install Prettier on Laptop and macbook
+
+
+lass A {
+    public:
+    virtual void f() { Serial.println("A"); }
+};
+
+class B : public A {
+    public:
+    virtual void f() { Serial.println("B"); }
+};
+
+
+void setup() {
+    A* obj;    // base-class pointer
+
+    Serial.begin(115200);
+
+    obj = new A();
+    obj->f();         // base class version
+    obj = new B();
+    obj->f();        // child class version
+}
+
+void loop() {
+}
