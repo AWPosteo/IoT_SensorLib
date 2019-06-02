@@ -1,27 +1,67 @@
 - Install Prettier on Laptop and macbook
 
+- Explanation pass by reference
+https://arduino.stackexchange.com/questions/24033/proper-use-of-and-when-passing-objects-in-methods
 
-lass A {
-    public:
-    virtual void f() { Serial.println("A"); }
-};
+5
 
-class B : public A {
-    public:
-    virtual void f() { Serial.println("B"); }
-};
+The method you have implemented, passing by pointer, is one of the two normal methods, yes. The other is passing by reference and is specific to C++, not C.
 
+Under the hood the end result is the same between the two methods, by the syntactic "sugar" is very different and the latter can be preferable for that reason alone.
 
-void setup() {
-    A* obj;    // base-class pointer
+Your method:
 
-    Serial.begin(115200);
-
-    obj = new A();
-    obj->f();         // base class version
-    obj = new B();
-    obj->f();        // child class version
+void function(whatever *ob) {
+    ob->method();
 }
 
-void loop() {
+function(&myObject);
+The pass by reference method:
+
+void function(whatever &ob) {
+    ob.method();
 }
+
+function(myObject);
+As you can see the need to convert the object into a pointer with & is now gone. That makes it much easier for people lacking in programming skills to use it since it hides the whole pointer mechanism from them.
+
+Also, internally your function now treats ob as just another object using ., rather than a pointer to an object and needing to use ->. Note that you can only use the reference operator in a function prototype, not a variable or anything like that - it's purely for passing objects and variables to functions. If you want to then go and store the pointer in a variable you still then have to get the address:
+
+void function(whatever &ob) {
+    myObjectPointer = &ob;
+}
+As you see it gets confusing with the two different uses of &. Basically though: if it's in a function prototype it's the pass by reference operator. If it's anywhere else it's the get the address of operator (or a logical AND of course).
+
+Storing the pointer can be useful if you want to then do other things later on with the same object, especially if you are yourself working with a class. For instance, I often write code similar to the following:
+
+class foo {
+    private:
+        bar *ob; // Pointer to other object of type "bar"
+    public:
+        foo(bar *inob) : ob(inob) {}
+        foo(bar &inob) : ob(&inob) {}
+
+        void something() {
+            ob->doSomething();
+        }
+
+        void somethingElse() {
+            ob->doSomethingElse();
+            ob->evenMoreThings();
+        }
+};
+You then have a choice of constructors:
+
+bar myBar;
+foo myFoo(myBar);
+
+// ... later ...
+foo.something();
+or
+
+bar myBar;
+foo myFoo(&myBar);
+
+// ... later ...
+foo.something();
+and the user doesn't have to remember which they need to use - whichever they try will work.

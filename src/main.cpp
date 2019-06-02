@@ -47,7 +47,7 @@ DHT sensorDHT22(DHTPIN, DHTTYPE);
 //BME280 (via SCL/SDA)
 BME280 sensorBME280;
 
-void oledDisplayText(String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction);
+void oledDisplayText(Adafruit_SSD1306 &oledPanel, String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction);
 
 void setup()
 {
@@ -101,38 +101,77 @@ void loop()
     Serial.print(h);
     Serial.println("% )");
 
-    oledDisplayText(String(t) + "", 2, 1, 15, 1, 0);
-    oledDisplayText("Temp", 1, 1, 76, 8, 1);
-    oledDisplayText(String(h) + " %", 1, 1, 15, 17, 1);
-    oledDisplayText("Sensor1:DHT22", 1, 1, 15, 25, 2);
+    oledDisplayText(oled01, String(t) + "", 2, 1, 15, 1, 0);
+    oledDisplayText(oled01, "Temp", 1, 1, 76, 8, 1);
+    oledDisplayText(oled01, String(h) + " %", 1, 1, 15, 17, 1);
+    oledDisplayText(oled01, "Sensor1:DHT22", 1, 1, 15, 25, 2);
 
     delay(1500);
 
-    oledDisplayText(String(sensorBME280.getTemperature()) + "", 2, 1, 15, 1, 0);
-    oledDisplayText("Temp", 1, 1, 76, 8, 1);
-    oledDisplayText(String(sensorBME280.getHumidity() * 1.00) + " %", 1, 1, 15, 17, 1);
-    oledDisplayText("Sensor2:BME280", 1, 1, 15, 25, 2);
+    oledDisplayText(oled01, String(sensorBME280.getTemperature()) + "", 2, 1, 15, 1, 0);
+    oledDisplayText(oled01, "Temp", 1, 1, 76, 8, 1);
+    oledDisplayText(oled01, String(sensorBME280.getHumidity() * 1.00) + " %", 1, 1, 15, 17, 1);
+    oledDisplayText(oled01, "Sensor2:BME280", 1, 1, 15, 25, 2);
 
     delay(1500);
+    
   }
+
+  byte error, address;
+  int nDevices;
+ 
+  Serial.println("Scanning...");
+ 
+  nDevices = 0;
+  for(address = 1; address < 127; address++ )
+  {
+    // The i2c_scanner uses the return value of
+    // the Write.endTransmisstion to see if
+    // a device did acknowledge to the address.
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+ 
+    if (error == 0)
+    {
+      Serial.print("I2C device found at address 0x");
+      if (address<16)
+        Serial.print("0");
+      Serial.print(address,HEX);
+      Serial.println("  !");
+ 
+      nDevices++;
+    }
+    else if (error==4)
+    {
+      Serial.print("Unknown error at address 0x");
+      if (address<16)
+        Serial.print("0");
+      Serial.println(address,HEX);
+    }    
+  }
+  if (nDevices == 0)
+    Serial.println("No I2C devices found\n");
+  else
+    Serial.println("done\n");
+
 }
 
-void oledDisplayText(String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction)
+void oledDisplayText(Adafruit_SSD1306 &oledPanel, String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction)
 {
   // TODO: passby OLED display via function to use the function for several oleds
   // Serial.println("FunctionCall: OledAction: "+ String(oledAction));
   // oledAction 0=Clear Display, 1=Just Prepare Content, 2=Do the refresh & update
   if (oledAction == 0)
   {
-    oled01.display();
-    oled01.clearDisplay();
+    oledPanel.display();
+    oledPanel.clearDisplay();
   }
-  oled01.setTextSize(oledTextSize);
-  oled01.setTextColor(oledColor);
-  oled01.setCursor(oledTextPosX, oledTextPosY);
-  oled01.println(oledText);
+  oledPanel.setTextSize(oledTextSize);
+  oledPanel.setTextColor(oledColor);
+  oledPanel.setCursor(oledTextPosX, oledTextPosY);
+  oledPanel.println(oledText);
   if (oledAction == 2)
   {
-    oled01.display();
+    oledPanel.display();
   }
 }
