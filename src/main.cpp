@@ -2,9 +2,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_Sensor.h>
-#include <Seeed_BME280.h>
+#include <Adafruit_BME280.h>
 #include <Wire.h>
-#include <DHT.h>
 #include <SPI.h>
 
 //MASTER VERSION 03.06.2019 - WORKSTATION PC
@@ -13,28 +12,25 @@
 #define OLED_RESET 4
 Adafruit_SSD1306 oled01(OLED_RESET);
 
-//Sensor DHT22
-#define DHTPIN 9
-#define DHTTYPE DHT22 //DHT11, DHT21, DHT22
-DHT sensorDHT22(DHTPIN, DHTTYPE);
-
 //BME280 (via SCL/SDA)
-BME280 sensorBME280;
+Adafruit_BME280 sensorBME280;
+
+#define seaLevelPressure (1013.25)
 
 long previousMillis = 0;
-long interval = 3000;
+long interval = 5000;
 
 void oledDisplayText(Adafruit_SSD1306 &oledPanel, String oledText, uint8_t oledTextSize, uint16_t oledColor, int16_t oledTextPosX, int16_t oledTextPosY, uint8_t oledAction);
 
 void setup()
 {
   Serial.begin(9600);
-  if (!sensorBME280.init()) // Wenn keine Daten vom BME abgefragt werden können...
-  {
-    Serial.println("FEHLER MIT BME280!"); // ...dann soll eine Fehlermeldung ausgegeben werden.
-  }
 
-  sensorDHT22.begin();
+  bool status = sensorBME280.begin(0x76);
+  if (!status) {
+    Serial.println("FEHLER MIT BME280!");
+    while(1);
+  }
 
   oled01.begin(SSD1306_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3C (for the 128x32)
   oledDisplayText(oled01, "", 2, 1, 15, 1, 0);
@@ -46,53 +42,25 @@ void loop()
 {
 
   unsigned long currentMillis = millis();
-  Serial.println("previousMillis:"+String(previousMillis)+" / currentMillis:" + String(currentMillis));
 
   if (currentMillis - previousMillis > interval)
   {
 
-    float Pascal;
-    double Bar;
-
-    Serial.println("BMW280 (Temp:" + String(sensorBME280.getTemperature()) + "°C / Feuchte:" + String(sensorBME280.getHumidity() * 1.00) + "% )  Druck: ");
-
-    Pascal = sensorBME280.getPressure(); // Abfrage des Drucks in Pascal
-    Bar = (Pascal / 100000);             // Wandlung des Pascal-Werts in Bar
-
-    Serial.println(String(Pascal) + " Pascal / " + String(Bar) + " bar)");
-
-    float h = sensorDHT22.readHumidity();    //Luftfeuchte auslesen
-    float t = sensorDHT22.readTemperature(); //Temperatur auslesen
+    Serial.println("BMW280");
+    Serial.println("Temp:" + String(sensorBME280.readTemperature()) + "°C / Feuchte:" + String(sensorBME280.readHumidity() * 1.00) + "%");
+    Serial.println("Druck: " + String(sensorBME280.readPressure() / 100.0F) + " hPa");
+    Serial.println("Approx. Altitude:" + String(sensorBME280.readAltitude(seaLevelPressure)));
 
     // save the last time you blinked the LED
     previousMillis = currentMillis;
 
-    // Prüfen ob eine gültige Zahl zurückgegeben wird. Wenn NaN (not a number) zurückgegeben wird, dann Fehler ausgeben.
-    if (isnan(t) || isnan(h))
-    {
-      Serial.println("DHT22 konnte nicht ausgelesen werden");
-    }
-    else
-    {
-      Serial.println("DHT22  (Temp:" + String(t) + "°C / Feuchte:" + String(h) + "% )");
-
-      oledDisplayText(oled01, String(t) + "", 2, 1, 15, 1, 0);
-      oledDisplayText(oled01, "Temp", 1, 1, 76, 8, 1);
-      oledDisplayText(oled01, String(h) + " %", 1, 1, 15, 17, 1);
-      oledDisplayText(oled01, "Sensor1:DHT22", 1, 1, 15, 25, 2);
-    }
-
-    //oledDisplayText(oled01, String(sensorBME280.getTemperature()) + "", 2, 1, 15, 1, 0);
-    //oledDisplayText(oled01, "Temp", 1, 1, 76, 8, 1);
-    //oledDisplayText(oled01, String(sensorBME280.getHumidity() * 1.00) + " %", 1, 1, 15, 17, 1);
-    //oledDisplayText(oled01, "Sensor2:BME280", 1, 1, 15, 25, 2);
-    //
-    //delay(1500);
+    oledDisplayText(oled01, String(sensorBME280.readTemperature()) + "", 2, 1, 15, 1, 0);
+    oledDisplayText(oled01, "Temp", 1, 1, 76, 8, 1);
+    oledDisplayText(oled01, String(sensorBME280.readHumidity() * 1.00) + " %", 1, 1, 15, 17, 1);
+    oledDisplayText(oled01, "Sensor2:BME280", 1, 1, 15, 25, 2);
 
     byte error, address;
     int nDevices;
-
-    Serial.println("Scanning...");
 
     nDevices = 0;
     for (address = 1; address < 127; address++)
