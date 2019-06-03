@@ -7,6 +7,7 @@
 #include <SPI.h>
 
 //MASTER VERSION 03.06.2019 - WORKSTATION PC
+//03.06. 22:17 SynTest from Work Laptop
 
 //OLED Display SSD1306
 #define OLED_RESET 4
