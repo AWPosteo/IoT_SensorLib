@@ -7,6 +7,8 @@
 #include <DHT.h>
 #include <SPI.h>
 
+//MASTER VERSION 03.06.2019 - WORKSTATION PC
+
 //OLED Display SSD1306
 #define OLED_RESET 4
 Adafruit_SSD1306 oled01(OLED_RESET);
